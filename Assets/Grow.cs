@@ -20,36 +20,53 @@ public class Grow : MonoBehaviour
     {
         if (Links.UiControls_S.bDoarConvex == true) // doar convexe
         {
-            if (Links.UiControls_S.bPastrForm == true) // si se pastreaza forma
+            if (Links.UiControls_S.Uniform == true)
             {
-                if (Links.UiControls_S.Uniform == true) // si creste uniform pe toate axele
+                switch (Links.UiControls_S.Care)
                 {
-                    GrowCaseConvexPastrareformaUniform();
-                }
-                else
-                {
-                    GrowCaseConvexPastrareformaNeuniform();
+                    case 1: CaseConvexUniform1(); break;
+                    case 2: CaseConvexUniform2(); break;
+                    case 3: CaseConvexUniform3(); break;
+                    default: break;
                 }
             }
-            else // nu pastreaza forma
+            else
             {
-                if (Links.UiControls_S.Uniform == true) // si creste uniform pe toate axele
+                switch (Links.UiControls_S.Care)
                 {
-                    // intreaba de colturi
-                }
-                else
-                {
-
+                    case 1: CaseConvexNeuniform1(); break;
+                    case 2: CaseConvexNeuniform2(); break;
+                    case 3: CaseConvexNeuniform3(); break;
+                    default: break;
                 }
             }
         }
         else
         {
-
+            if (Links.UiControls_S.Uniform == true)
+            {
+                switch (Links.UiControls_S.Care)
+                {
+                    case 1: CaseConcavUniform1(); break;
+                    case 2: CaseConcavUniform2(); break;
+                    case 3: break;
+                    default: break;
+                }
+            }
+            else
+            {
+                switch (Links.UiControls_S.Care)
+                {
+                    case 1: CaseConcavNeuniform1(); break;
+                    case 2: CaseConcavNeuniform2(); break;
+                    case 3: break;
+                    default: break;
+                }
+            }
         }
     }
 
-    private void GrowCaseConvexPastrareformaUniform()
+    private void CaseConvexUniform1()
     {
         Vector3[] Processed = Convexize(baseVertices);
         Vector3[] Grown = GrowUniform(Processed);
@@ -58,7 +75,27 @@ public class Grow : MonoBehaviour
         Vector3[] WorkingVerts = AddBackZero(GrownAndCorners);
         GenerateTheMesh(WorkingVerts);
     }
-    private void GrowCaseConvexPastrareformaNeuniform()
+
+    private void CaseConvexUniform2()
+    {
+        Vector3[] Processed = Convexize(baseVertices);
+        Vector3[] Grown = GrowUniform(Processed);
+        Vector3[] WorkingVerts = AddBackZero(Grown);
+        GenerateTheMesh(WorkingVerts);
+    }
+
+    private void CaseConvexUniform3()
+    {
+        Vector3[] Processed = Convexize(baseVertices);
+        Vector3[] Grown = GrowUniform(Processed);
+        Vector3[] Circles = GenerateCircleVerts(Processed);
+        Vector3[] GrownPlusCircles = SortVertsByAngle(AddVectorArraysTogether(Grown, Circles));
+        Vector3[] ConvexisedAgain = Convexize(GrownPlusCircles);
+        Vector3[] WorkingVerts = AddBackZero(ConvexisedAgain);
+        GenerateTheMesh(WorkingVerts);
+    }
+
+    private void CaseConvexNeuniform1()
     {
         Vector3[] Processed = Convexize(baseVertices);
         Vector3[] tempGrown = GrowUniformConstant(Processed, 0.02f);
@@ -68,6 +105,139 @@ public class Grow : MonoBehaviour
         Vector3[] WorkingVerts = AddBackZero(finalGrown);
         GenerateTheMesh(WorkingVerts);
     }
+
+    private void CaseConvexNeuniform2()
+    {
+        Vector3[] Processed = Convexize(baseVertices);
+        Vector3[] finalGrown = GrowNeuniform(Processed);
+        Vector3[] WorkingVerts = AddBackZero(finalGrown);
+        GenerateTheMesh(WorkingVerts);
+    }
+
+    private void CaseConvexNeuniform3()
+    {
+        Vector3[] Processed = Convexize(baseVertices);
+        Vector3[] finalGrown = GrowNeuniform(Processed);
+        Vector3[] Circles = GenerateCirclesNeuniformVerts(Processed);
+        Vector3[] GrownPlusCircles = SortVertsByAngle(AddVectorArraysTogether(finalGrown, Circles));
+        Vector3[] ConvexisedAgain = Convexize(GrownPlusCircles);
+        Vector3[] WorkingVerts = AddBackZero(ConvexisedAgain);
+        GenerateTheMesh(WorkingVerts);
+    }
+
+    private void CaseConcavUniform1()
+    {
+        Vector3[] Start = RemoveIndex(baseVertices, 0).ToArray();
+        Vector3[] Grown = GrowUniform(Start);
+        Vector3[] ExtraCorners = AddSharpCorners(Grown);
+        Vector3[] GrownAndCorners = AddVectorArraysTogether(Grown, ExtraCorners);
+        Vector3[] WorkingVerts = AddBackZero(GrownAndCorners);
+        GenerateTheMesh(WorkingVerts);
+    }
+
+    private void CaseConcavUniform2()
+    {
+        Vector3[] Start = RemoveIndex(baseVertices, 0).ToArray();
+        Vector3[] Grown = GrowUniform(Start);
+        Vector3[] WorkingVerts = AddBackZero(Grown);
+        GenerateTheMesh(WorkingVerts);
+    }
+
+    private void CaseConcavNeuniform1()
+    {
+        Vector3[] Start = RemoveIndex(baseVertices, 0).ToArray();
+        Vector3[] tempGrown = GrowUniformConstant(Start, 0.02f);
+        Vector3[] ExtraCorners = AddSharpCorners(tempGrown);
+        Vector3[] GrownAndCorners = SortVertsByAngle(AddVectorArraysTogether(tempGrown, ExtraCorners));
+        Vector3[] finalGrown = GrowNeuniform(GrownAndCorners);
+        Vector3[] WorkingVerts = AddBackZero(finalGrown);
+        GenerateTheMesh(WorkingVerts);
+    }
+
+    private void CaseConcavNeuniform2()
+    {
+        Vector3[] Start = RemoveIndex(baseVertices, 0).ToArray();
+        Vector3[] tempGrown = GrowUniformConstant(Start, 0.02f);
+        Vector3[] finalGrown = GrowNeuniform(tempGrown);
+        Vector3[] WorkingVerts = AddBackZero(finalGrown);
+        GenerateTheMesh(WorkingVerts);
+    }
+    private Vector3[] GenerateCircleVerts(Vector3[] corners)
+    {
+        float Multiplier;
+        List<Vector3> NewVerts = new List<Vector3>();
+        if (float.TryParse(Links.UiControls_S.UnifScale.text, out Multiplier) != true)
+        {
+            Multiplier = 0.2f;
+        }
+        if (Multiplier > 1f || Multiplier < 0.1f)
+        {
+            Multiplier = 0.2f;
+        }
+        List<Vector3> TempListCircles = new List<Vector3>();
+        for(int x1 = 0; x1 < corners.Length; x1++)
+        {
+            for(int x2 = 0; x2 < 36; x2++)
+            {
+                Vector3 tempVertex = corners[x1];
+                Vector3 dir = Quaternion.Euler(0, 0, 10 * x2) * Vector2.up;
+                tempVertex = tempVertex + (dir * Multiplier);
+                TempListCircles.Add(tempVertex);
+            }
+        }
+        return TempListCircles.ToArray();
+    }
+
+    private Vector3[] GenerateCirclesNeuniformVerts(Vector3[] corners)
+    {
+        float MultiXp, MultiXm, MultiYp, MultiYm;
+        if (float.TryParse(Links.UiControls_S.NeUnifScalePX.text, out MultiXp) != true)
+        {
+            MultiXp = 0.2f;
+        }
+        if (float.TryParse(Links.UiControls_S.NeUnifScaleMX.text, out MultiXm) != true)
+        {
+            MultiXm = 0.2f;
+        }
+        if (float.TryParse(Links.UiControls_S.NeUnifScalePY.text, out MultiYp) != true)
+        {
+            MultiYp = 0.2f;
+        }
+        if (float.TryParse(Links.UiControls_S.NeUnifScaleMY.text, out MultiYm) != true)
+        {
+            MultiYm = 0.2f;
+        }
+        if (MultiXp > 1.5f || MultiXp < 0.02f)
+        {
+            MultiXp = 0.02f;
+        }
+        if (MultiXm > 1.5f || MultiXm < 0.02f)
+        {
+            MultiXm = 0.02f;
+        }
+        if (MultiYp > 1.5f || MultiYp < 0.02f)
+        {
+            MultiYp = 0.02f;
+        }
+        if (MultiYm > 1.5f || MultiYm < 0.02f)
+        {
+            MultiYm = 0.02f;
+        }
+        List<Vector3> NewVerts = new List<Vector3>();
+
+        for (int x1 = 0; x1 < corners.Length; x1++)
+        {
+            for (int x2 = 0; x2 < 36; x2++)
+            {
+                Vector3 tempVertex = corners[x1];
+                Vector3 dir = Quaternion.Euler(0, 0, 10 * x2) * Vector2.up;
+                tempVertex = tempVertex + (dir * 0.15f);
+                NewVerts.Add(GetCorrectMultiplierBasedOnAngle(tempVertex, MultiXp, MultiXm, MultiYp, MultiYm));
+            }
+        }
+        return NewVerts.ToArray();
+    }
+
     private float GetAngleABC(Vector3 a, Vector3 b, Vector3 c)
     {
         Vector3 AB = new Vector3(b.x - a.x, b.y - a.y, b.z - a.z);
@@ -432,7 +602,7 @@ public class Grow : MonoBehaviour
         mesh.triangles = newTriangles;
         InstObj.GetComponent<Renderer>().material.color = ExpandedColor;
         InstObj.transform.position = InstObj.transform.position + new Vector3(0, 0, 0.01f);
-        Instantiate(Helper, InstObj.transform.position - new Vector3(0, 0, 0.05f), Quaternion.identity);
+        //Instantiate(Helper, InstObj.transform.position - new Vector3(0, 0, 0.05f), Quaternion.identity);
     }
     private float RuleOf3Calculator(float max,float current)
     {
@@ -465,46 +635,4 @@ public class Grow : MonoBehaviour
         TempVec3 = TempVec3 + VectorToGrow;
         return TempVec3;
     }
-    /*List<Vector3> NewVerts = new List<Vector3>();
-        for(int x3 = 0; x3 <= WorkingVerts.Length-1; x3++)
-        {
-            if (x3 < WorkingVerts.Length-1)
-            {
-                Vector3 Direction = Quaternion.Euler(0, 0, 90) * (WorkingVerts[x3 + 1] - WorkingVerts[x3]);
-                Direction = Vector3.Normalize(Direction);
-                Vector3 temp1 = WorkingVerts[x3] + Direction * 0.2f;
-                Vector3 temp2 = WorkingVerts[x3 + 1] + Direction * 0.2f;
-                NewVerts.Add(temp1);
-                NewVerts.Add(temp2);
-            }
-            else
-            {
-                Vector3 Direction = Quaternion.Euler(0, 0, 90) * (WorkingVerts[0] - WorkingVerts[WorkingVerts.Length-1]);
-                Direction = Vector3.Normalize(Direction);
-                Vector3 temp1 = WorkingVerts[x3] + Direction * 0.2f;
-                Vector3 temp2 = WorkingVerts[0] + Direction * 0.2f;
-                NewVerts.Add(temp1);
-                NewVerts.Add(temp2);
-            }
-        }*/
-
-    /*
-    Vector3[] tempArray = new Vector3[NewVerts.Count + NewVerts.Count / 2];
-    List<Vector3> tempList = new List<Vector3>();
-        for (int x4 = 1; x4<NewVerts.Count - 1; x4 += 2)
-        {
-            Vector3 temp = ((NewVerts.ToArray()[x4] + NewVerts.ToArray()[x4 + 1]) / 2);
-    temp = temp + Vector3.Normalize(temp)* ((Vector3.Distance(NewVerts.ToArray()[x4], NewVerts.ToArray()[x4 + 1])) / 2);
-            tempList.Add(temp);
-        }
-
-tempArray = AddListTogether(tempList, NewVerts);
-tempArray = SortVertsByAngle(tempArray);
-
-foreach (Vector3 x in tempArray)
-{
-    Instantiate(Helper, x, Quaternion.identity);
-}
-
-WorkingVerts = AddBackZero(tempArray);*/
 }

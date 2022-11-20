@@ -15,13 +15,10 @@ public class UiControls : MonoBehaviour
     private Button DoarConvex, SiConcav;
     private Toggle DoarConvexTogg, SiConcavTogg;
     public bool bDoarConvex = true;
-    //Form Settings
-    private Button PastrForm, NePastrForm;
-    private Toggle PastrFormTogg, NePastrFormTogg;
-    public bool bPastrForm = true;
     //Corner Settings
-    private Button ColtRot, ColtDrept;
-    private Toggle ColtRotTogg, ColtDreptTogg;
+    private Button ColtRot, ColtDrept, ColtAscutit;
+    private Toggle ColtRotTogg, ColtDreptTogg, ColtAscutitTogg;
+    public int Care=1;
     //Other Buttons
     private Button StartDraw;
     private Button StartGrow;
@@ -35,7 +32,6 @@ public class UiControls : MonoBehaviour
         Links.CrestereUniform_Inp = Panel.transform.Find("Scale").GetComponent<InputField>();
         AssignScaleUi();
         AssignConcavityUi();
-        AssignFormUi();
         AssignCornerUi();
         AssignOtherButtonsUi();
     }
@@ -62,26 +58,18 @@ public class UiControls : MonoBehaviour
         DoarConvex.onClick.AddListener(ButDoarConvex);
         SiConcav.onClick.AddListener(ButSiConcave);
     }
-    private void AssignFormUi()
-    {
-        PastrForm = Panel.transform.Find("PasForma").GetComponent<Button>();
-        NePastrForm = Panel.transform.Find("NePasForma").GetComponent<Button>();
-        PastrFormTogg = Panel.transform.Find("PasFormaT").GetComponent<Toggle>();
-        NePastrFormTogg = Panel.transform.Find("NePasFormaT").GetComponent<Toggle>();
-        PastrForm.onClick.AddListener(ButPastrForm);
-        NePastrForm.onClick.AddListener(ButNePastrForm);
 
-
-    }
     private void AssignCornerUi()
     {
         ColtRot = Panel.transform.Find("ColtRotund").GetComponent<Button>();
         ColtDrept = Panel.transform.Find("ColtDrept").GetComponent<Button>();
+        ColtAscutit = Panel.transform.Find("PasForma").GetComponent<Button>();
         ColtRotTogg = Panel.transform.Find("ColtRotundT").GetComponent<Toggle>();
         ColtDreptTogg = Panel.transform.Find("ColtDreptT").GetComponent<Toggle>();
-
-        ColtRot.interactable = false;
-        ColtDrept.interactable = false;
+        ColtAscutitTogg = Panel.transform.Find("PasFormaT").GetComponent<Toggle>();
+        ColtRot.onClick.AddListener(ButColtRotund);
+        ColtDrept.onClick.AddListener(ButColtDrept);
+        ColtAscutit.onClick.AddListener(ButColtAscutit);
     }
     private void AssignOtherButtonsUi()
     {
@@ -124,24 +112,30 @@ public class UiControls : MonoBehaviour
         DoarConvexTogg.isOn = false;
         SiConcavTogg.isOn = true;
     }
-    private void ButPastrForm()
-    {
-        bPastrForm = true;
-        PastrFormTogg.isOn = true;
-        NePastrFormTogg.isOn = false;
 
-        ColtRot.interactable = false;
-        ColtDrept.interactable = false;
-    }
-    private void ButNePastrForm()
+    private void ButColtAscutit()
     {
-        bPastrForm = false;
-        PastrFormTogg.isOn = false;
-        NePastrFormTogg.isOn = true;
-
-        ColtRot.interactable = true;
-        ColtDrept.interactable = true;
+        Care = 1;
+        ColtAscutitTogg.isOn = true;
+        ColtDreptTogg.isOn = false;
+        ColtRotTogg.isOn = false;
     }
+
+    private void ButColtDrept()
+    {
+        Care = 2;
+        ColtAscutitTogg.isOn = false;
+        ColtDreptTogg.isOn = true;
+        ColtRotTogg.isOn = false;
+    }
+    private void ButColtRotund()
+    {
+        Care = 3;
+        ColtAscutitTogg.isOn = false;
+        ColtDreptTogg.isOn = false;
+        ColtRotTogg.isOn = true;
+    }
+
     private void ButStartDraw()
     {
         Links.MouseFollower.GetComponent<ShapeCreator>().StartBuild();
