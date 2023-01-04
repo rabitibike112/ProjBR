@@ -252,7 +252,7 @@ public class Grow : MonoBehaviour
         float Res = ABNorm.x * BCNorm.x + ABNorm.y * BCNorm.y + ABNorm.z * BCNorm.z;
         return Mathf.Acos((Res * 180) / 3.141592f);
     }
-    private float PolygonAreaCalculator(Vector3[] Verts)
+    public float PolygonAreaCalculator(Vector3[] Verts)
     {
         float SideA = 0;
         float SideB = 0;
@@ -305,7 +305,7 @@ public class Grow : MonoBehaviour
         Current -= Min;
         return ((Current * 100f) / Max) / 100f;
     }
-    private float GetAngleVectors(Vector3 Reference, Vector3 Real)
+    public float GetAngleVectors(Vector3 Reference, Vector3 Real)
     {
         if (Real == Vector3.zero)
         {
@@ -326,7 +326,7 @@ public class Grow : MonoBehaviour
         }
         return angle;
     }
-    private Vector3[] SortVertsByAngle(Vector3[] Verts)
+    public Vector3[] SortVertsByAngle(Vector3[] Verts)
     {
         int len = Verts.Length;
         for (int x1 = 0; x1 < len; x1++)
@@ -411,7 +411,7 @@ public class Grow : MonoBehaviour
         }
         return temp;
     }
-    private Vector3[] Convexize(Vector3[] ToConvexize)
+    public Vector3[] Convexize(Vector3[] ToConvexize)
     {
         Vector3[] WorkingVerts = RemoveIndex(ToConvexize, 0).ToArray(); //convexize
         bool OneFound = true;
